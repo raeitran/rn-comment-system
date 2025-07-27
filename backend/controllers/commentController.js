@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 const Comment = require("../models/comments");
 
-const getCommentsByPost = async (req, res) => {
+const getCommentsBynovel = async (req, res) => {
   try {
-    const { postId } = req.params;
+    const { novelId } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(postId)) {
+    if (!mongoose.Types.ObjectId.isValid(novelId)) {
       return res.status(404).json({ error: "No such comment" });
     }
 
-    const comments = await Comment.find({ postId, parentId: null }).sort({
+    const comments = await Comment.find({ novelId, parentId: null }).sort({
       createdAt: -1,
     });
 
@@ -31,19 +31,25 @@ const getReplies = async (req, res) => {
   }
 };
 
+// add comment
 const addComment = async (req, res) => {
   try {
-    const { content, parentId = null } = req.body;
-    const { postId } = req.params;
-    const user = req.user;
+    const { novelId, chapterId } = req.params;
 
-    const comment = await Comment.create({
-      postId,
-      userId: user._id,
+    const { username, content, parentId = null } = req.body;
+
+    const commentData = {
+      novelId,
+      username,
       content,
       parentId,
-    });
+    };
 
+    if (chapterId) {
+      commentData.chapterId = chapterId;
+    }
+
+    const comment = await Comment.create(commentData);
     res.status(201).json(comment);
   } catch (error) {
     console.error(error.message);
@@ -102,7 +108,7 @@ const deleteComment = async (req, res) => {
 };
 
 module.exports = {
-  getCommentsByPost,
+  getCommentsBynovel,
   getReplies,
   addComment,
   updateComment,
