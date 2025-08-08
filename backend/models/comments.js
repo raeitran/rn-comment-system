@@ -4,14 +4,18 @@ const Schema = mongoose.Schema;
 
 const commentSchema = new Schema(
   {
-    postId: {
+    novelId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Post",
+      ref: "Novel",
       required: true,
     },
-    userId: {
+    chapterId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Chapter",
+      default: null,
+    },
+    username: {
+      type: String,
       required: true,
     },
     content: {
@@ -24,7 +28,7 @@ const commentSchema = new Schema(
       default: null,
     },
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Comments", commentSchema);
